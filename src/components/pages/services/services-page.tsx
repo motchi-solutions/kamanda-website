@@ -18,7 +18,7 @@ export function ServicesPage({ region }: ServicesPageProps) {
           eyebrow="Kamanda Management LLC"
           title="Our Services"
           highlight="Services"
-          description="Management, project coordination, business solutions, and technology adoption support."
+          description="Tailored management, project coordination, business solutions, and technology adoption support designed to streamline operations, enhance efficiency, and support sustainable business growth."
           imageSrc="/services/services-hero.png"
           imageAlt="Dubai skyline and illuminated city roads at night"
           imageSizes="(max-width: 1919px) 1920px, 100vw"
