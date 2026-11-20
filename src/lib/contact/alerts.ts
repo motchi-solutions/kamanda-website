@@ -24,8 +24,8 @@ export function reportContactError(error: unknown, requestId: string, operation 
     const bucket = Math.floor(Date.now() / interval);
     try {
       // Shared limit across instances; Brevo idempotency also protects Redis-outage fallback.
-      const url = process.env.UPSTASH_REDIS_REST_URL;
-      const token = process.env.UPSTASH_REDIS_REST_TOKEN;
+      const url = process.env.KV_REST_API_URL;
+      const token = process.env.KV_REST_API_TOKEN;
       if (url && token && new URL(url).protocol === "https:") {
         const response = await fetch(url, {
           method: "POST", headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
@@ -44,7 +44,7 @@ export function reportContactError(error: unknown, requestId: string, operation 
       const response = await fetch("https://api.brevo.com/v3/smtp/email", {
         method: "POST", headers: { "api-key": key, "Content-Type": "application/json" },
         body: JSON.stringify({
-          sender: { name: "Kamanda Website Monitoring", email: process.env.BREVO_SENDER_EMAIL || "no-reply@kamandagroup.com" },
+          sender: { name: "Kamanda Website Monitoring", email: process.env.CONTACT_FROM_EMAIL || "no-reply@kamandagroup.com" },
           to: [{ email: "admin@motchi.ca" }],
           subject: `Kamanda contact form: ${event.errorCode} — ${event.service}`,
           textContent: `Contact form service failure\n\n${JSON.stringify(event, null, 2)}\n\nSearch server logs using requestId. Other failures during this alert window remain in logs. Alerts are limited to one per 30 minutes across error categories. No visitor data is included.`,

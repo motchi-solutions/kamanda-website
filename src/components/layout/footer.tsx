@@ -70,9 +70,9 @@ export function Footer({ region }: FooterProps) {
           <p>
             Website by{" "}
             <a 
-              href="https://github.com/motchi-solutions"
+              href="https://www.motchi.ca/?utm_source=kamanda&utm_medium=referral&utm_campaign=client-footer"
               target="_blank"
-              rel="noopener noreferrer"
+              rel="noopener"
               className="font-semibold text-gold underline transition-colors ease-in-out duration-300 hover:text-snow/80"
             >
               Motchi Solutions

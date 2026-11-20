@@ -15,8 +15,8 @@ export class EmailError extends ContactError {
 
 export function emailConfig() {
   const key = process.env.BREVO_API_KEY;
-  const sender = process.env.BREVO_SENDER_EMAIL || "no-reply@kamandagroup.com";
-  const recipient = process.env.BREVO_RECIPIENT_EMAIL || "info@kamandagroup.com";
+  const sender = process.env.CONTACT_FROM_EMAIL || "no-reply@kamandagroup.com";
+  const recipient = process.env.CONTACT_TO_EMAIL || "info@kamandagroup.com";
   if (!key || !isEmail(sender) || !isEmail(recipient)) throw new EmailError(false, "configuration");
   return { key, sender, recipient };
 }

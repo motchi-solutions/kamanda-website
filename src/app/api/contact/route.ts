@@ -55,7 +55,7 @@ export async function POST(request: Request) {
     const data = validate(await readBody(request));
     if (data.website) throw new ContactError("CONTACT_INVALID_REQUEST");
     const cooldown = await rateLimit(request, data.email);
-    await verifyCaptcha(data);
+    await verifyCaptcha(data, source.hostname);
     emailConfig();
     const reservation = await reserveDuplicate(data, cooldown);
     const referenceId = `KAM-${new Date().toISOString().slice(0, 10).replaceAll("-", "")}-${randomBytes(6).toString("hex").toUpperCase()}`;
