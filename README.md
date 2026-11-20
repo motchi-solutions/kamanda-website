@@ -4,7 +4,7 @@ A professional management and business consultancy website supporting organizati
 
 ## Stack
 
-Next.js 16 App Router, React 19, strict TypeScript, Tailwind CSS v4, and React Compiler. Manrope and Cormorant Garamond are loaded with `next/font`. Interface icons use Lucide through `react-icons/lu`. See [direct dependencies](docs/dependencies.md).
+Next.js 16 App Router, React 19, strict TypeScript, Tailwind CSS v4, and React Compiler. Manrope and Cormorant Garamond are loaded with `next/font`. Interface icons use Lucide through `react-icons/lu`. See [direct dependencies](docs/DEPENDENCIES.md).
 
 ## Local development
 
@@ -42,20 +42,16 @@ UPSTASH_REDIS_REST_URL=
 UPSTASH_REDIS_REST_TOKEN=
 CONTACT_HASH_SALT=
 
-# Public site keys — embedded at build time; redeploy after changing
-NEXT_PUBLIC_RECAPTCHA_V3_SITE_KEY=
-NEXT_PUBLIC_RECAPTCHA_V2_SITE_KEY=
+# Cloudflare Turnstile — site key is public and embedded at build time; redeploy after changing
+NEXT_PUBLIC_TURNSTILE_SITE_KEY=
+# Server only
+TURNSTILE_SECRET_KEY=
 
-# Server only — Google Cloud project and API key
-GCP_PROJECT_ID=
-GOOGLE_RECAPTCHA_API_KEY=
-RECAPTCHA_V3_MIN_SCORE=0.5
-
-# Server only — exact allowed hostnames, comma-separated
-RECAPTCHA_ALLOWED_HOSTNAMES=localhost
+# Server only — exact allowed hostnames, comma-separated (origin and Turnstile checks)
+CONTACT_ALLOWED_HOSTNAMES=localhost
 ```
 
-Keep the **reCAPTCHA Enterprise API enabled** and restrict `GOOGLE_RECAPTCHA_API_KEY` to **reCAPTCHA Enterprise API**. Use Enterprise score-based (v3) and checkbox (v2) site keys from the configured project. Local `.env.local` uses Dev site keys with `RECAPTCHA_ALLOWED_HOSTNAMES=localhost`; Vercel Production uses Prod site keys with `RECAPTCHA_ALLOWED_HOSTNAMES=kamandagroup.com,www.kamandagroup.com`. An explicit hostname list replaces the default `SITE_URL` hostname. Redeploy after changing public site keys.
+Create one Cloudflare Turnstile widget (Managed mode) with the production, preview and `localhost` hostnames. Local `.env.local` can use Cloudflare's test keys (`1x00000000000000000000AA` / `1x0000000000000000000000000000000AA`) with `CONTACT_ALLOWED_HOSTNAMES=localhost`; Vercel Production uses the real keys with `CONTACT_ALLOWED_HOSTNAMES=kamandagroup.com,www.kamandagroup.com`. An explicit hostname list replaces the default `SITE_URL` hostname. The old `RECAPTCHA_ALLOWED_HOSTNAMES` name is still read if the new one is unset; the Google reCAPTCHA variables (`NEXT_PUBLIC_RECAPTCHA_*`, `GCP_PROJECT_ID`, `GOOGLE_RECAPTCHA_API_KEY`, `RECAPTCHA_V3_MIN_SCORE`) are no longer used and can be removed from Vercel.
 
 `SITE_URL` must match the intended origin; use `http://localhost:3000` for local work. Vercel supplies `VERCEL=1`; do not set it on an untrusted non-Vercel host. Outside Vercel, production IP trust must be adapted explicitly. Full provider setup, no-JavaScript behavior, and failure/retry policies are in [docs/contact.md](docs/contact.md).
 
@@ -116,7 +112,7 @@ Use `next/image`: the skyline is eager with high fetch priority, and below-fold 
 
 ## Contact and deployment
 
-The contact form uses server-verified reCAPTCHA Enterprise score assessments with checkbox fallback, Upstash Redis rate limits/duplicate protection, and Brevo internal notification plus visitor confirmation. It preserves input on errors and provides accessible loading, inline recovery, and a success panel with reference feedback. Provider configuration is required before sending; unavailable services fail gracefully. See [contact setup, security, error codes, and verified quotas](docs/contact.md).
+The contact form uses server-verified Cloudflare Turnstile bot checks, Upstash Redis rate limits/duplicate protection, and Brevo internal notification plus visitor confirmation. It preserves input on errors and provides accessible loading, inline recovery, and a success panel with reference feedback. Provider configuration is required before sending; unavailable services fail gracefully. See [contact setup, security, error codes, and verified quotas](docs/contact.md).
 
 Deploy to a Next.js-capable platform that supports the Node server and proxy, such as Vercel. A static-only export cannot preserve the cookie-reading shared routes and proxy behavior. Install with `npm ci`, make development dependencies available during the build, configure `SITE_URL`, then build and serve using the scripts above. Google font loading through `next/font/google` needs network access at build time. Production region cookies are secure and require HTTPS. Outside Vercel, geo behavior needs an equivalent trusted country header supplied by the hosting layer; without it, root entry defaults to UAE.
 
@@ -135,10 +131,10 @@ The cause of the reported live-site issue has not yet been confirmed.
 ## Remaining work
 
 - Replace lower-resolution hero and Project Management photos with larger originals when available.
-- Configure and manually verify Google reCAPTCHA, Upstash, and Brevo before accepting live enquiries.
+- Configure and manually verify Cloudflare Turnstile, Upstash, and Brevo before accepting live enquiries.
 - Perform the separate final production/browser/responsive validation pass.
 
-See [contributing](CONTRIBUTING.md), [architecture](docs/architecture.md), and [dependencies](docs/dependencies.md).
+See [contributing](CONTRIBUTING.md), [architecture](docs/architecture.md), and [dependencies](docs/DEPENDENCIES.md).
 
 Hero source paths, current dimensions, replacement instructions, and localhost cache troubleshooting are documented in [Hero imagery](docs/hero-imagery.md). Heroes reference root-relative public image URLs through `next/image`.
 

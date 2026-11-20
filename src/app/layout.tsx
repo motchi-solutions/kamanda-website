@@ -7,6 +7,8 @@ import { getBaseUrl } from "@/lib/site";
 import "./globals.css";
 import { ContactNavigationProvider } from "@/components/ui/contact-navigation";
 import { SiteIntro } from "@/components/layout/site-intro";
+import { SiteAnalytics } from "@/components/analytics/site-analytics";
+import { analyticsEnabled } from "@/lib/analytics";
 
 const manrope = Manrope({
   variable: "--font-manrope",
@@ -99,6 +101,7 @@ export default function RootLayout({
         <ContactNavigationProvider>
           <div className="site-content">{children}</div>
         </ContactNavigationProvider>
+        {analyticsEnabled() && <SiteAnalytics />}
       </body>
     </html>
   );

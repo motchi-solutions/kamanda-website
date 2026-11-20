@@ -1,7 +1,7 @@
 import type { ContactFormState } from "./use-contact-form";
 
 export function CompletionChecklist({ form }: { form: ContactFormState }) {
-  const { requirements, challenge, v2Token, busy } = form;
+  const { requirements, busy } = form;
   return (
     <div
       className="text-sm leading-6 text-carbon/75"
@@ -35,9 +35,7 @@ export function CompletionChecklist({ form }: { form: ContactFormState }) {
         <p className="mt-1 text-xs leading-5">
           {busy
             ? "Your enquiry is being sent."
-            : challenge && !v2Token
-              ? "Complete the verification in the form to continue."
-              : "Your details are complete. Select Send Enquiry to continue."}
+            : "Your details are complete. Select Send Enquiry to continue."}
         </p>
       )}
     </div>

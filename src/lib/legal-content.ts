@@ -27,7 +27,7 @@ export const legalDocuments: Record<LegalDocument["slug"], LegalDocument> = {
   "privacy-policy": {
     slug: "privacy-policy",
     title: "Privacy Policy",
-    effectiveDate: "September 29, 2026",
+    effectiveDate: "November 19, 2026",
     filename: "Kamanda-Privacy-Policy.pdf",
     intro:
       'Kamanda Management LLC ("Kamanda," "we," "us," or "our") respects your privacy and aims to handle personal information carefully and responsibly. This Privacy Policy explains what information we collect through kamandagroup.com, why we use it, and how third-party services may process limited information on our behalf.',
@@ -93,9 +93,9 @@ export const legalDocuments: Record<LegalDocument["slug"], LegalDocument> = {
         ],
         bullets: [
           "Brevo for transactional email delivery",
-          "Google reCAPTCHA Enterprise for automated abuse and bot detection",
+          "Cloudflare Turnstile for automated abuse and bot detection",
           "Upstash Redis for rate limiting and duplicate-submission protection",
-          "Vercel for website hosting and server execution",
+          "Vercel for website hosting, content delivery, server execution, and anonymous visitor statistics",
           "Google for Kamanda’s business email storage and handling of enquiry correspondence",
         ],
         afterBullets: [
@@ -111,11 +111,17 @@ export const legalDocuments: Record<LegalDocument["slug"], LegalDocument> = {
         ]
       },
       {
-        heading: "Google reCAPTCHA Enterprise",
+        heading: "Cloudflare Turnstile",
         paragraphs: [
-          "Google reCAPTCHA Enterprise helps protect the website against fraud, bots, and abuse. It processes technical and interaction signals, which may include IP address, browser and device information, cookies, and activity associated with the security check. We do not intentionally send the enquiry message itself for CAPTCHA verification.",
-          "For reCAPTCHA customer data, Kamanda acts as controller and Google acts as processor under the applicable Google Cloud terms and Cloud Data Processing Addendum. Google processes that data to provide and maintain the security service.",
+          "Cloudflare Turnstile helps protect the contact form against bots and abuse. It processes technical signals, which may include IP address and browser and device information, only to tell people from automated traffic. It sets no cookies and is not used for advertising. We do not send the enquiry message itself to Cloudflare. See Cloudflare's Turnstile privacy addendum at https://www.cloudflare.com/turnstile-privacy-policy/.",
           "Security checks may block or challenge a submission. If you cannot submit the form or believe a security decision is mistaken, contact info@kamandagroup.com so that a person can assist with your enquiry."
+        ]
+      },
+      {
+        heading: "Visitor Statistics",
+        paragraphs: [
+          "We count visits with Vercel Web Analytics to understand which pages are useful. For each page view it records the page address (without anything after a \"?\" or \"#\", except campaign tags such as \"utm_source\" that show which website or campaign linked to us), the referring website, approximate location (country and city), and device, browser, and operating system type.",
+          "It sets no cookies and does not store your IP address. To tell visits apart it uses a hashed value derived from the request that is discarded after 24 hours, so it cannot follow you across days or other websites. We see only aggregated totals. See https://vercel.com/docs/analytics/privacy-policy."
         ]
       },
       {
@@ -131,7 +137,7 @@ export const legalDocuments: Record<LegalDocument["slug"], LegalDocument> = {
       {
         heading: "Cookies and Similar Technologies",
         paragraphs: [
-          "Website hosting and security services may use cookies or similar browser technologies to operate and protect the website. reCAPTCHA uses a security cookie called _grecaptcha. Blocking these technologies in your browser may affect the contact form or security checks; email remains an alternative.",
+          "The website does not set advertising or analytics cookies. Cloudflare Turnstile and Vercel Web Analytics work without cookies. Hosting and security services may still use similar browser technologies to operate and protect the website. Blocking these technologies in your browser may affect the contact form or security checks; email remains an alternative.",
           "Where a technology requires consent under applicable law, consent must be obtained before it is used. This privacy notice is not a substitute for that consent."
         ]
       },

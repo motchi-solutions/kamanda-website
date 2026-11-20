@@ -1,50 +1,19 @@
 import { CompletionChecklist } from "./completion-checklist";
-import { CaptchaChallenge } from "./captcha-challenge";
 import type { ContactFormState } from "./use-contact-form";
 
 export function ContactActions({ form }: { form: ContactFormState }) {
   const {
-    challenge,
-    challengeHeading,
-    captchaReset,
-    setV2Token,
-    showError,
-    setCaptchaReset,
+    turnstileContainer,
     validationNotice,
     requirements,
-    v2Token,
     busy,
     hydrated,
     notice,
   } = form;
   return (
     <div>
-      {challenge && (
-        <div className="mb-6 rounded-lg border border-gold/40 bg-white p-4">
-          <p
-            ref={challengeHeading}
-            tabIndex={-1}
-            className="text-sm leading-6 text-navy"
-          >
-            Please complete the verification below to continue.
-          </p>
-          <CaptchaChallenge
-            resetKey={captchaReset}
-            onToken={setV2Token}
-            onError={() => showError("CONTACT_CAPTCHA_SERVICE_UNAVAILABLE")}
-          />
-          <button
-            type="button"
-            className="text-action mt-2"
-            onClick={() => {
-              setV2Token("");
-              setCaptchaReset((value) => value + 1);
-            }}
-          >
-            Reload verification
-          </button>
-        </div>
-      )}
+      {/* Cloudflare Turnstile: shows a checkbox here only if needed. */}
+      <div ref={turnstileContainer} className="mb-4 empty:mb-0" />
       {validationNotice && (
         <p role="alert" className="mb-3 text-sm text-red-700">
           {validationNotice}
@@ -58,9 +27,7 @@ export function ContactActions({ form }: { form: ContactFormState }) {
           <p id="contact-requirements" className="sr-only">
             {requirements.length
               ? `Complete: ${requirements.join(", ")}.`
-              : challenge && !v2Token
-                ? "Complete verification to send your enquiry."
-                : busy
+              : busy
                   ? "Sending your enquiry."
                   : "Your enquiry is ready to send."}
           </p>
@@ -69,8 +36,7 @@ export function ContactActions({ form }: { form: ContactFormState }) {
             disabled={
               !hydrated ||
               requirements.length > 0 ||
-              busy ||
-              (challenge && !v2Token)
+              busy
             }
             aria-describedby="contact-requirements"
             className="btn btn-primary contact-submit w-full whitespace-nowrap disabled:cursor-not-allowed disabled:opacity-50"
@@ -104,15 +70,11 @@ export function ContactActions({ form }: { form: ContactFormState }) {
         </div>
       )}
       <p className="text-xs leading-5 text-carbon/65">
-        This site is protected by reCAPTCHA and the Google{" "}
-        <a href="https://policies.google.com/privacy" className="text-navy">
-          Privacy Policy
-        </a>{" "}
-        and{" "}
-        <a href="https://policies.google.com/terms" className="text-navy">
-          Terms of Service
-        </a>{" "}
-        apply.
+        This form uses Cloudflare Turnstile to block spam. See the{" "}
+        <a href="https://www.cloudflare.com/turnstile-privacy-policy/" className="text-navy">
+          Turnstile privacy policy
+        </a>
+        .
       </p>
       <noscript>
         <p className="mt-3 text-sm">
