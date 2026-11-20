@@ -7,7 +7,7 @@ import {
   useSyncExternalStore,
   type FormEvent,
 } from "react";
-import { executeV3 } from "@/lib/contact/captcha-client";
+import { useTurnstile } from "@/lib/use-turnstile";
 import {
   contactErrors,
   type ContactErrorCode,
@@ -43,10 +43,8 @@ export function useContactForm() {
   const [busy, setBusy] = useState(false);
   const sending = useRef(false);
   const active = useRef(true);
-  const challengeHeading = useRef<HTMLParagraphElement>(null);
-  const [challenge, setChallenge] = useState(false);
-  const [v2Token, setV2Token] = useState("");
-  const [captchaReset, setCaptchaReset] = useState(0);
+  const { container: turnstileContainer, getToken: getTurnstileToken } =
+    useTurnstile(process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY);
   const [success, setSuccess] = useState<string | null>(null);
   const [fallback, setFallback] = useState<EmailDraft | null>(null);
   const submittedDraft = useRef<EmailDraft | null>(null);
@@ -72,9 +70,6 @@ export function useContactForm() {
       controller.current?.abort();
     };
   }, []);
-  useEffect(() => {
-    if (challenge) challengeHeading.current?.focus({ preventScroll: true });
-  }, [challenge]);
 
   const showError = (code: ContactErrorCode) => {
     // Replaying an error must not extend the original retry window.
@@ -142,10 +137,6 @@ export function useContactForm() {
       return;
     }
     failedAttempt.current = null;
-    if (challenge && !v2Token) {
-      showError("CONTACT_CAPTCHA_FAILED");
-      return;
-    }
     sending.current = true;
     setBusy(true);
     setNotice(null);
@@ -153,7 +144,7 @@ export function useContactForm() {
     let phase: "captcha" | "send" = "captcha";
     let timeout: ReturnType<typeof setTimeout> | undefined;
     try {
-      const recaptchaToken = challenge ? v2Token : await executeV3();
+      const turnstileToken = await getTurnstileToken();
       if (!active.current) return;
       phase = "send";
       const abort = new AbortController();
@@ -175,8 +166,7 @@ export function useContactForm() {
           service: fields.get("service"),
           message: fields.get("message"),
           website: fields.get("website"),
-          recaptchaToken,
-          recaptchaVersion: challenge ? "v2" : "v3",
+          turnstileToken,
         }),
       });
       const result: ContactResponse = await response.json();
@@ -195,19 +185,11 @@ export function useContactForm() {
         setMessageTouched(false);
         setFormReset((value) => value + 1);
         setValidationNotice("");
-        setChallenge(false);
       } else if (
         result?.ok === false &&
         Object.hasOwn(contactErrors, result.code)
       ) {
-        if (result.code === "CONTACT_CAPTCHA_REQUIRED") {
-          setChallenge(true);
-          setNotice({
-            message: contactErrors.CONTACT_CAPTCHA_REQUIRED.message,
-          });
-        } else {
-          showError(result.code);
-        }
+        showError(result.code);
       } else {
         showError("CONTACT_INTERNAL_ERROR");
       }
@@ -222,11 +204,7 @@ export function useContactForm() {
       clearTimeout(timeout);
       controller.current = null;
       sending.current = false;
-      if (active.current) {
-        setV2Token("");
-        setCaptchaReset((value) => value + 1);
-        setBusy(false);
-      }
+      if (active.current) setBusy(false);
     }
   };
 
@@ -247,12 +225,7 @@ export function useContactForm() {
     clientType,
     setClientType,
     busy,
-    challengeHeading,
-    challenge,
-    v2Token,
-    setV2Token,
-    captchaReset,
-    setCaptchaReset,
+    turnstileContainer,
     notice,
     fallback,
     success,

@@ -15,8 +15,8 @@ export function fingerprint(value: string): string {
 
 async function redis(command: (string | number)[]): Promise<unknown> {
   try {
-    const url = process.env.UPSTASH_REDIS_REST_URL;
-    const token = process.env.UPSTASH_REDIS_REST_TOKEN;
+    const url = process.env.KV_REST_API_URL;
+    const token = process.env.KV_REST_API_TOKEN;
     if (!url || new URL(url).protocol !== "https:" || !token) throw unavailable("configuration");
     const response = await fetch(url, { method: "POST", headers: {
       Authorization: `Bearer ${token}`, "Content-Type": "application/json",

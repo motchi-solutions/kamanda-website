@@ -13,7 +13,7 @@ export type Enquiry = {
   clientType: "individual" | "business"; service: keyof typeof services;
 };
 export type Submission = Enquiry & {
-  website: string; recaptchaToken: string; recaptchaVersion: "v3" | "v2";
+  website: string; turnstileToken: string;
 };
 export const isEmail = (value: string) => value.length <= 254 && /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9.-]*[a-zA-Z0-9])?\.[a-zA-Z]{2,63}$/.test(value);
 
@@ -21,7 +21,7 @@ export function validate(value: unknown): Submission {
   const fail = () => { throw new ContactError("CONTACT_VALIDATION_FAILED"); };
   if (!value || typeof value !== "object" || Array.isArray(value)) return fail();
   const data = value as Record<string, unknown>;
-  const keys = ["name", "businessName", "email", "phone", "phoneCountry", "phoneExtension", "subject", "message", "clientType", "service", "website", "recaptchaToken", "recaptchaVersion"];
+  const keys = ["name", "businessName", "email", "phone", "phoneCountry", "phoneExtension", "subject", "message", "clientType", "service", "website", "turnstileToken"];
   if (Object.keys(data).some((key) => !keys.includes(key))) return fail();
   const field = (key: string, max: number, optional = false) => {
     if (optional && data[key] === undefined) return "";
@@ -47,11 +47,10 @@ export function validate(value: unknown): Submission {
   if (/[\r\n]/.test(name + businessName + email + rawPhone + subject) || !isEmail(email)) return fail();
   if (data.clientType !== "individual" && data.clientType !== "business") return fail();
   if (typeof data.service !== "string" || !Object.hasOwn(services, data.service)) return fail();
-  if ((data.recaptchaVersion !== "v3" && data.recaptchaVersion !== "v2") ||
-    typeof data.recaptchaToken !== "string" || !data.recaptchaToken.trim() || data.recaptchaToken.length > 8192) {
+  if (typeof data.turnstileToken !== "string" || !data.turnstileToken.trim() || data.turnstileToken.length > 2048) {
     throw new ContactError("CONTACT_CAPTCHA_FAILED");
   }
   return { name, businessName: data.clientType === "business" ? businessName : "", email, phone, subject, message, website, clientType: data.clientType,
     service: data.service as keyof typeof services,
-    recaptchaVersion: data.recaptchaVersion, recaptchaToken: data.recaptchaToken };
+    turnstileToken: data.turnstileToken };
 }
