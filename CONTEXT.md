@@ -25,7 +25,7 @@ Read this with [AGENTS.md](AGENTS.md) before every task. This file holds the rul
 
 - Analytics: Vercel Web Analytics via `src/lib/analytics.ts` and `src/components/analytics/site-analytics.tsx` (Production only, path plus `utm_*` tags). Enable it in the Vercel project's Analytics tab.
 - Spam protection: Cloudflare Turnstile. Server check in `src/lib/turnstile.ts`, client hook in `src/lib/use-turnstile.ts`. Needs `NEXT_PUBLIC_TURNSTILE_SITE_KEY` and `TURNSTILE_SECRET_KEY`.
-- `SITE_URL` sets canonical, social, sitemap and robots URLs. Never ship a localhost value to production.
+- The production origin (`https://www.kamandagroup.com`) is in `src/lib/site.ts`. Canonical, social, sitemap, robots and JSON-LD URLs all derive from it. `SITE_URL` is only an optional override; leave it unset in Vercel.
 - Only the two `NEXT_PUBLIC_*` contact keys are public. All other contact variables stay server-side. See [README.md](README.md) and [docs/contact.md](docs/contact.md).
 - Technology and AI enquiries also notify Motchi. Do not change recipients without asking.
 - Motchi is mentioned as a technology partner. Keep that wording factual.

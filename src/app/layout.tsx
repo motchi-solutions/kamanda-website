@@ -2,7 +2,8 @@ import { socialMetadata } from "@/lib/social-metadata";
 import type { Metadata } from "next";
 import { Cormorant_Garamond, Manrope } from "next/font/google";
 
-import { getBaseUrl } from "@/lib/site";
+import { JsonLd } from "@/components/seo/json-ld";
+import { indexingAllowed, site, siteUrl } from "@/lib/site";
 
 import "./globals.css";
 import { ContactNavigationProvider } from "@/components/ui/contact-navigation";
@@ -23,7 +24,7 @@ const cormorantGaramond = Cormorant_Garamond({
   display: "swap",
 });
 
-const baseUrl = getBaseUrl();
+const baseUrl = siteUrl();
 
 export const metadata: Metadata = {
   metadataBase: new URL(baseUrl),
@@ -70,18 +71,32 @@ export const metadata: Metadata = {
     path: "/",
   }),
 
-  robots: {
-    index: true,
-    follow: true,
+  robots: indexingAllowed()
+    ? {
+        index: true,
+        follow: true,
+        googleBot: {
+          index: true,
+          follow: true,
+          "max-image-preview": "large",
+          "max-snippet": -1,
+          "max-video-preview": -1,
+        },
+      }
+    : { index: false, follow: false },
+};
 
-    googleBot: {
-      index: true,
-      follow: true,
-      "max-image-preview": "large",
-      "max-snippet": -1,
-      "max-video-preview": -1,
-    },
-  },
+/* Organization details for search engines. Only facts shown on the site. */
+const organizationJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "ProfessionalService",
+  name: site.name,
+  url: site.url,
+  logo: `${site.url}/icon.svg`,
+  image: `${site.url}/seo/og-default.png`,
+  description: site.description,
+  areaServed: ["United Arab Emirates", "Saudi Arabia"],
+  email: "info@kamandagroup.com",
 };
 
 export default function RootLayout({
@@ -97,6 +112,7 @@ export default function RootLayout({
         <a href="#main-content" className="skip-link">
           Skip to content
         </a>
+        <JsonLd data={organizationJsonLd} />
         <SiteIntro />
         <ContactNavigationProvider>
           <div className="site-content">{children}</div>

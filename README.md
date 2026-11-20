@@ -19,23 +19,17 @@ Open `http://localhost:3000`. Before changing Next.js code, read `AGENTS.md` and
 
 ### Environment variables
 
-No custom environment variable is required to start development. Optional `.env.local`:
-
-```dotenv
-SITE_URL=http://localhost:3000
-```
-
-`SITE_URL` is an absolute public origin used for canonical, social, sitemap, and robots URLs. Set it to the intended HTTPS production origin before deployment. If omitted, `src/lib/site.ts` uses `http://localhost:3000` in development and `https://kamandagroup.com` otherwise. Do not carry a localhost value into production. Environment files are ignored by Git; do not commit secrets. `NODE_ENV` is managed by Next.js scripts.
+No environment variable is required to start development. The production origin, `https://www.kamandagroup.com`, is set in `src/lib/site.ts`. Development uses `http://localhost:3000`, Vercel Previews use their branch URL, and search engines may index only Vercel Production. `SITE_URL` optionally overrides the origin, for example for another local port. Environment files are ignored by Git; do not commit secrets. `NODE_ENV` is managed by Next.js scripts.
 
 ### Contact environment variables
 
 Only the two `NEXT_PUBLIC_*` site keys are public. All other contact variables stay server-side. Set them in `.env.local` and the appropriate Vercel environments; never commit real secrets.
 
 ```dotenv
-# Server only — Brevo transactional API, verified sender and internal inbox
+# Server only — Brevo API key, verified sender and enquiry inbox
 BREVO_API_KEY=
-BREVO_SENDER_EMAIL=no-reply@kamandagroup.com
-BREVO_RECIPIENT_EMAIL=info@kamandagroup.com
+CONTACT_FROM_EMAIL=no-reply@kamandagroup.com
+CONTACT_TO_EMAIL=info@kamandagroup.com
 
 # Server only — existing Upstash database and independent random salt (32+ characters)
 UPSTASH_REDIS_REST_URL=
@@ -51,7 +45,7 @@ TURNSTILE_SECRET_KEY=
 CONTACT_ALLOWED_HOSTNAMES=localhost
 ```
 
-Create one Cloudflare Turnstile widget (Managed mode) with the production, preview and `localhost` hostnames. Local `.env.local` can use Cloudflare's test keys (`1x00000000000000000000AA` / `1x0000000000000000000000000000000AA`) with `CONTACT_ALLOWED_HOSTNAMES=localhost`; Vercel Production uses the real keys with `CONTACT_ALLOWED_HOSTNAMES=kamandagroup.com,www.kamandagroup.com`. An explicit hostname list replaces the default `SITE_URL` hostname. The old `RECAPTCHA_ALLOWED_HOSTNAMES` name is still read if the new one is unset; the Google reCAPTCHA variables (`NEXT_PUBLIC_RECAPTCHA_*`, `GCP_PROJECT_ID`, `GOOGLE_RECAPTCHA_API_KEY`, `RECAPTCHA_V3_MIN_SCORE`) are no longer used and can be removed from Vercel.
+Create one Cloudflare Turnstile widget (Managed mode) with the production, preview and `localhost` hostnames. Local `.env.local` can use Cloudflare's test keys (`1x00000000000000000000AA` / `1x0000000000000000000000000000000AA`) with `CONTACT_ALLOWED_HOSTNAMES=localhost`; Vercel Production uses the real keys with `CONTACT_ALLOWED_HOSTNAMES=kamandagroup.com,www.kamandagroup.com`. An explicit hostname list replaces the default `SITE_URL` hostname. The Google reCAPTCHA variables (`NEXT_PUBLIC_RECAPTCHA_*`, `GCP_PROJECT_ID`, `GOOGLE_RECAPTCHA_API_KEY`, `RECAPTCHA_V3_MIN_SCORE`) are no longer used and can be removed from Vercel.
 
 `SITE_URL` must match the intended origin; use `http://localhost:3000` for local work. Vercel supplies `VERCEL=1`; do not set it on an untrusted non-Vercel host. Outside Vercel, production IP trust must be adapted explicitly. Full provider setup, no-JavaScript behavior, and failure/retry policies are in [docs/contact.md](docs/contact.md).
 
