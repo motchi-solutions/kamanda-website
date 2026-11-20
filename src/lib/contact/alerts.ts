@@ -24,8 +24,8 @@ export function reportContactError(error: unknown, requestId: string, operation 
     const bucket = Math.floor(Date.now() / interval);
     try {
       // Shared limit across instances; Brevo idempotency also protects Redis-outage fallback.
-      const url = process.env.UPSTASH_REDIS_REST_URL;
-      const token = process.env.UPSTASH_REDIS_REST_TOKEN;
+      const url = process.env.KV_REST_API_URL;
+      const token = process.env.KV_REST_API_TOKEN;
       if (url && token && new URL(url).protocol === "https:") {
         const response = await fetch(url, {
           method: "POST", headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },

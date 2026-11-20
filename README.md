@@ -31,9 +31,9 @@ BREVO_API_KEY=
 CONTACT_FROM_EMAIL=no-reply@kamandagroup.com
 CONTACT_TO_EMAIL=info@kamandagroup.com
 
-# Server only — existing Upstash database and independent random salt (32+ characters)
-UPSTASH_REDIS_REST_URL=
-UPSTASH_REDIS_REST_TOKEN=
+# Server only — added by Vercel when the shared Upstash store is connected; salt is your own (32+ characters)
+KV_REST_API_URL=
+KV_REST_API_TOKEN=
 CONTACT_HASH_SALT=
 
 # Cloudflare Turnstile — site key is public and embedded at build time; redeploy after changing
